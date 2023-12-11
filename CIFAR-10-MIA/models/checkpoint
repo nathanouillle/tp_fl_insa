@@ -1,0 +1,2 @@
+model_checkpoint_path: "CIFAR-0.5"
+all_model_checkpoint_paths: "CIFAR-0.5"
