@@ -83,11 +83,6 @@ def net_backdoor(X_train, y_train, X_test, y_test, epochs, weights=None, verbose
     if type(weights) == np.ndarray:
         model.set_weights(weights)
 
-    # TODO À enlever pour le TP
-    for index, y in enumerate(y_train):
-        if np.argmax(y) == 1:
-            y_train[index] = to_categorical([0], 10)
-
     # fit model
     history = model.fit(X_train, y_train,batch_size=128, epochs=epochs,validation_data=(X_test, y_test),verbose=0)
 
