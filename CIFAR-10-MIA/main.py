@@ -20,7 +20,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 
 model.load_weights('models/CIFAR-1.4')
 
-y_hat = None # à enlever
+y_hat = None
 
 submission = []
 

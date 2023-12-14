@@ -1,5 +1,5 @@
 import numpy as np
-from aggregators import aggregator_mean,aggregator_median,aggregator_custom
+from aggregators import aggregator_mean,aggregator_custom
 from train import net,net_adversary
 
 def federated(X_clients, y_clients, X_test, y_test, fl_iterations,n_adversaire=0,epochs_FL=1,dataset='MNIST'):
