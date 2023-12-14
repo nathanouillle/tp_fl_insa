@@ -7,7 +7,7 @@ attaque d’appartenance ainsi que leurs contre-mesures.
 ### Installation  
 
 ```shell=bash
-git clone https://gitlab.inria.fr/nbrunet/tp-fl.git
+git clone https://gitlab.inria.fr/nbrunet/tp-fl-insa.git
 cd tp-fl
 python -m venv .tp
 source .tp/bin/activate
