@@ -8,7 +8,7 @@ attaque d’appartenance ainsi que leurs contre-mesures.
 
 ```shell=bash
 git clone https://gitlab.inria.fr/nbrunet/tp-fl-insa.git
-cd tp-fl
+cd tp-fl-insa
 python -m venv .tp
 source .tp/bin/activate
 pip install numpy pandas matplotlib tensorflow
