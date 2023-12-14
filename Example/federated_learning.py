@@ -1,13 +1,11 @@
 import numpy as np
-from aggregators import aggregator_mean,aggregator_custom
-from train import net,net_adversary
+from aggregators import aggregator_mean
+from train import net
 
-def federated(X_clients, y_clients, X_test, y_test, fl_iterations,n_adversaire=0,epochs_FL=1,dataset='MNIST'):
+def federated(X_clients, y_clients, X_test, y_test, fl_iterations,epochs_FL=1,dataset='MNIST'):
     '''This function performs the Federated Learning'''
     model_init = net(X_clients[0], y_clients[0], X_test, y_test, epochs=1, weights=False, verbose=0,dataset=dataset)
     acc_fl = []
-
-    adversaire = [0]*(len(X_clients)-n_adversaire) + [1]*n_adversaire
 
     for fl in range(fl_iterations):
         print('Federated learning iteration: ', fl + 1)
@@ -16,15 +14,9 @@ def federated(X_clients, y_clients, X_test, y_test, fl_iterations,n_adversaire=0
         weights_list = []
         for i in range(len(X_clients)):
             if fl == 0:
-                if adversaire[i]:
-                    model_client = net_adversary(X_clients[i], y_clients[i], X_test, y_test, epochs=epochs_FL, weights=False, verbose=0,dataset=dataset)
-                else :
-                    model_client = net(X_clients[i], y_clients[i], X_test, y_test, epochs=epochs_FL, weights=False, verbose=0,dataset=dataset)
+                model_client = net(X_clients[i], y_clients[i], X_test, y_test, epochs=epochs_FL, weights=False, verbose=0,dataset=dataset)
             else:
-                if adversaire[i]:
-                    model_client = net_adversary(X_clients[i], y_clients[i], X_test, y_test, epochs=epochs_FL, weights=FL_weights, verbose=0,dataset=dataset)
-                else :
-                    model_client = net(X_clients[i], y_clients[i], X_test, y_test, epochs=epochs_FL, weights=FL_weights, verbose=0,dataset=dataset)
+                model_client = net(X_clients[i], y_clients[i], X_test, y_test, epochs=epochs_FL, weights=FL_weights, verbose=0,dataset=dataset)
             weights_list.append(np.array(model_client[1], dtype='object'))
 
         FL_weights = aggregator_mean(weights_list)
