@@ -6,7 +6,7 @@ attaque d’appartenance ainsi que leurs contre-mesures.
 
 ### Installation  
 
-Cloner le repository du TP : ```git clone https://gitlab.inria.fr/nbrunet/tp-fl.git```
+Cloner le repository du TP : ```git clone https://gitlab.inria.fr/nbrunet/tp-fl-insa.git```
 
 Il vous faudra ensuite installer tensorflow et numpy sur votre machine.
 
