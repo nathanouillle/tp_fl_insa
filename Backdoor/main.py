@@ -19,9 +19,9 @@ n_adversary = 1
 X_clients, y_clients = data_to_clients_random(X_train, y_train,n_clients=n_clients)
 
 # federated learning
-# federated_learning, model, FL_weights = federated(X_clients, y_clients, X_test, y_test, fl_iterations=epochs, n_backdoor=0,model_name='FL-4')
 
-model = create_model(num_classes=10,model_name='models/FL-4')
+federated_learning, model, FL_weights = federated(X_clients, y_clients, X_test, y_test, fl_iterations=epochs, n_backdoor=0,model_name='FL-4')
+
 federated_learning_backdoor,model_backdoor, FL_weights_backdoor = federated(X_clients, y_clients, X_test, y_test, fl_iterations=epochs, n_backdoor=n_backdoor)
 
 accu,accu_backdoor = 0,0
@@ -39,7 +39,7 @@ loss_backdoor = model_backdoor.evaluate(X_train,y_train)
 
 result = abs((accu_backdoor-accu)/(loss[1]-loss_backdoor[1]))
 
-print(f"Pourcentage de voitures classifiées comme des avions par le model sans backdoor : {accu}\n")
-print(f"Pourcentage de voitures classifiées comme des avions par le model avec backdoor : {accu_backdoor}")
+print(f"Percentage of cars classified as airplanes by the model without a backdoor: : {accu}\n")
+print(f"Percentage of cars classified as airplanes by the model with a backdoor: : {accu_backdoor}")
 
 print(result)
