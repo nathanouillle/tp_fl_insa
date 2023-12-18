@@ -41,7 +41,7 @@ for a, b in zip(ground_truth, submission):
         break
 MIA = (len(ground_truth) - s) / len(ground_truth)
 
-print(f"La MIA obtient un score de : {MIA}")
+print(f"MIA accuracy : {MIA}")
 
 # Scoring Defense against MIA
 
@@ -53,6 +53,6 @@ if False : # Switch to True for Defense
 
     accu = TP/len(y_hat)
 
-    print(f"Le modèle obtient une précision de : {accu}")
+    print(f"model accuracy : {accu}")
 
-    print(f"score final : {accu/MIA}")
+    print(f"score : {accu/MIA}")

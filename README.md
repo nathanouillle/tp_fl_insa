@@ -1,8 +1,8 @@
 # TP Federate Learning
 
-Dans ce TP, vous allez mettre en pratique un apprentissage fédéré entre plusieurs
-participants et analyser l’impact d’une attaque de poisoning et d’une
-attaque d’appartenance ainsi que leurs contre-mesures.
+You will implement federated learning among multiple participants 
+and analyze the impact of a poisoning attack and a membership inference attack, 
+as well as their countermeasures.
 
 ### Installation  
 
@@ -14,11 +14,13 @@ source .tp/bin/activate
 pip install numpy pandas matplotlib tensorflow
 ```
 
-##### Test de l'installation :
-Exécuter le fichier Example/main.py pour vérifier que tout fonctionne. Il doit tourner avec les données MNIST et CIFAR-10.
+##### Installation test
+Execute the Example/main.py file and verify that everything is working, 
+it should run with the MNIST and CIFAR-10 datasets.
 
 ```shell=bash
-python Example/main.py
+cd Example
+python main.py
 ```
 
 ### Arborescence du projet
@@ -79,16 +81,19 @@ python Example/main.py
 ├── README.md
 ```
 
-### Définition des models
+### Definition of the models
 
-Le modèle pour classifier les images MNIST est un réseau de neurones dense, définit de manière séquentielle, fully connected, avec un rectifier (relu) comme fonction d'activation.
-Le modèle pour classifier les images CIFAR-10 est un CNN , avec un rectifier (relu) comme fonction d'activation.
-### Prise en main
+The model for classifying MNIST images is a dense neural network defined sequentially, fully connected, with a rectifier (ReLU) as the activation function.
 
-Prendre la main sur le fonctionnement et sur les différents fichiers du TP. 
-Constater ensuite l'influence du nombre d'epochs, du nombre de clients, de la taille du jeu de donnée. 
-Essayer la fonction ```data_to_clients_pond()``` avec 5 clients pour voir l'influence de la division du dataset.
-Implémenter la fonction ```data_to_clients_custom()``` avec 5 clients comme expliqué en commentaire.
+The model for classifying CIFAR-10 images is a Convolutional Neural Network (CNN) with a rectifier (ReLU) as the activation function.
+### Getting Started
+
+Observe the influence of the number of epochs, the number of clients, and the size of the dataset
+
+Use the function ```data_to_clients_pond()``` with 5 clients to see the impact of dataset division. 
+
+Implement the function ```data_to_clients_custom()``` with 5 clients as explained in the comments.
+
 
 ```python
 def data_to_clients_custom(X_train,y_train,n_clients=5):
@@ -119,13 +124,13 @@ def data_to_clients_custom(X_train,y_train,n_clients=5):
 ### Poisoning 
 
 
-On utilisera maintenant ```data_to_clients_random()```, et le jeu de donnée MNIST pour les prochaines questions.
+For the following questions, we will use  ```data_to_clients_random()```, and the MNIST dataset.
 
-Dans cette section, nous allons mettre en place une attaque de poisoning.
-Un client adversaire va polluer le modèle qu’il reçoit afin de le rendre moins
-performant. Pour cela, le client adversaire va définir aléatoirement les poids des
-neurones avant de les renvoyer au serveur d’agrégation.
-Modifier le nombre d'adversaires ainsi que la fonction ```net_adversaire() ``` pour qu'elle renvoie des poids aléatoires. 
+
+In this section, we will set up a poisoning attack. 
+An adversarial client will pollute the received model to make it less effective. 
+To achieve this, the adversarial client will randomly set the weights of the neurons before sending them back to the aggregation server. 
+Modify the number of adversaries and the ```net_adversaire() ```function to make it return random weights.
 
 ```python
 def net_adversary(X_train, y_train, X_test, y_test, epochs, weights=None, verbose=1,dataset='MNIST',num_classes=10):
@@ -150,23 +155,24 @@ def net_adversary(X_train, y_train, X_test, y_test, epochs, weights=None, verbos
     return model, model.get_weights(), history, acc
 
 ```
-
-La forme des poids du modèle renvoyé ne doit pas être modifiée.
-Lancer l'entraînement et vérifier que les performances du modèle ont bien été dégradées.
+The shape of the weights of the returned model must belong the same
+Run the training and verify that the model's performance has indeed degraded.
 
 ```shell=bash
-python Poison/main.py
+cd Poison
+python main.py
 ```
 
-Constater ensuite l'influence du nombre d'adversaires par rapport au nombre de clients total.
-Une autre attaque que des poids aléatoires peut aussi être pertinente.
+Observe the influence of the number of adversaries compared to the total number of clients.
+Another attack than random weights can also be relevant
 
 ### Defense against poisoning
 
-Dans cette section, nous considérerons que le modèle est empoisonné par une attaque de type Poisoning vue précédemment 
-et nous allons implémenter une contre-mesure.
-Il faut utiliser une autre forme d'agrégation moins sensible aux valeurs extrêmes. 
-En conservant votre attaque de poisoning de l'étape précédente, modifier la fonction ```aggregator_custom()``` pour implémenter une contre-mesure.
+In this section, we will assume that the model is poisoned by a Poisoning attack as seen previously,
+and we will implement a countermeasure.
+It is necessary to use a different form of aggregation less sensitive to extreme values. 
+While retaining your poisoning attack from the previous step, 
+modify the ```aggregator_custom()``` function to implement a countermeasure.
 
 ```python
 def aggregator_custom(weights_list):
@@ -174,32 +180,32 @@ def aggregator_custom(weights_list):
     return None
 ```
 
-Appeler cette fonction dans ```federated_learning.py``` à la place d'```aggregator_mean()```.
+Call this function in ```federated_learning.py``` instead of```aggregator_mean()```.
 
-Vérifier que l'entraînement n'est pas impacté par la présence d'un adversaire empoisonné. 
-Avec 6 clients, en augmentant le nombre d'adversaires, mettre en évidence la limite de la contre-mesure implémentée.
+Check that the training is not impacted by the presence of a poisoned adversary. 
 
-Coder une méthode plus robuste que celle codée précédemment. 
+With 6 clients, increasing the number of adversaries, highlight the limit of the implemented countermeasure. 
 
+Code a more robust method than the one coded previously.
 
 
 ### Membership Inférence Attack (MIA)
 
-Une attaque d’appartenance (ou de Membership) vise à savoir si des données 
-spécifiques faisaient partie du jeu de données d'entraînement d’un modèle.
-Nous allons implémenter une attaque basée sur la précision du modèle. Celle-ci sera
-différente pour des données utilisées ou non pour l'entraînement (la précision sera plus
-haute pour des données que le modèle connaît). Ainsi avec un seuil bien
-choisi, il sera possible de différencier des données faisant partie du jeu
-d'entraînement, ou non.
+A membership inference attack aims to determine if specific data points were part of a model's training dataset.
+We will implement an attack based on the model's accuracy. 
+This accuracy will be different for data used or not used during training (higher accuracy for data that the model knows). 
+Thus, with a well-chosen threshold,
+it will be possible to differentiate data points belonging to the training set from those that do not.
 
-Cette section sera fait sur des données du dataset CIFAR-10. 
-En utilisant le modèle fourni et le jeu de donnée (x.npy et y.npy) composé de données d'entrainement et de données de test mélangées,
-le but est d'implémenter une MIA et de l'évaluer. 
-Avant de coder une attaque de MIA, visualiser à l'aide d'un histogramme la distribution des niveaux de confiance du modèle sur l'ensemble des données.
-Définir ensuite un seuil qui pourrait séparer les données d'entraînement et de test.
+We will now use CIFAR-10 dataset
 
-En modifiant ```MIA.py```, et ```main.py```, 
+Using the provided model and the dataset (x.npy and y.npy) consisting of mixed training and test data,
+visualize the distribution of the model's confidence levels across all data points using a histogram. Use matplotlib
+
+Then, define a threshold that could separate the training and test data, and implement the MIA
+
+
+Modify  ```MIA.py```, and ```main.py```, 
 
 ```python
 def attack(predictions,treshold):
@@ -213,40 +219,43 @@ def attack(predictions,treshold):
     return submission
 ```
 
-Récupérer les predictions du modèle sur les données (dans la variable ```y_hat``` par exemple), appeler la fonction ```attack()```, 
-dont le résultat sera stocké dans la variable ```submission```. 
+Retrieve the model predictions on the data (store them in the variable `y_hat`, for example), 
+call the function `attack()`, 
+and store the result in the variable `submission`.
 
 ```shell=bash
-python CIFAR-10-MIA/main.py
+cd CIFAR-10-MIA
+python main.py
 ```
 
-Ajuster votre attaque pour améliorer votre MIA.
+Adjust you attack to improve your score
 
-Une autre attaque différente de la MIA avec seuil peut aussi être pertinente.
+Another attack different from the MIA with a threshold could also be relevant.
 
 ### Defense against MIA
 
-Le principe de cette contre-mesure est d'ajouter du bruit dans le retour modèle pour éviter une MIA.
-Modifier la méthode ```predict()``` de la classe ```Model``` afin d'ajouter du bruit.
+The principle of this countermeasure is to add noise to the model's output to prevent a MIA. 
+Modify the `predict()` method of the `Model` class to add noise.
 
 ```python
 def predict(self, x, **kwargs):
     return super(Model, self).predict(x, **kwargs)
 ```
 
-Constater l'influence de votre défense sur l'efficacité de la MIA.
-Enfin, essayer de trouver le meilleur compromis defense/utilité grâce au rapport précision du modèle sur précision de la MIA.
+Observe the influence of your defense on the effectiveness of the MIA. 
+Finally, try to find the best trade-off between defense and utility 
+by using the model accuracy to attack accuracy ratio
 
 ### Backdoor
 
-Dans cette section, nous allons mettre en place une attaque de type backdoor.
-Un client adversaire va essayer d'influencer le modèle lors de l'entraînement
-afin qu'il fasse une erreur de classification sur une partie précise du dataset.
-Une backdoor ne vise pas à détériorer la modèle au risque d'être exclue de l'entraînement.
-Dans notre cas, sur des données CIFAR-10, il faudra faire en sorte que le modèle agrégé classe le plus possible de voiture en avion. 
+We will implement a backdoor attack. 
+An adversarial client will try to influence the model during training to make it misclassify a specific portion of the dataset. A backdoor attack does not aim to degrade the model, risking exclusion from training. 
+In our case, on CIFAR-10 data, 
+you need to ensure that the aggregated model classifies as many cars as possible as airplanes.
 
-De la même manière que pour le poisoning, il faut modifier la fonction ```net_backdoor()```, 
-et le nombre de clients qui appliquent cette backdoor. 
+
+Similar to the Poisoning task, you need to modify the `net_backdoor()` function 
+and the number of clients applying this backdoor.
 
 
 ```python
@@ -271,18 +280,19 @@ def net_backdoor(X_train, y_train, X_test, y_test, epochs, weights=None, verbose
     return model, model.get_weights(), history, acc
 ```
 
-Tester la backdoor
+Test the backdoor
 
 ```shell=bash
-python Backdoor/main.py
+cd Backdoor
+python main.py
 ```
 
-Vous pouvez utiliser différentes méthodes pour augmenter le nombre de voitures classées comme des avions par le modèle agrégé. 
+You can use other methods (and combine them) to increase the number of cars classified as airplanes by the aggregated model.
 
 
-
-Il faudra optimiser la valeur absolue du rapport entre la différence de mauvaise classification entre un modèle sain et un modèle avec votre backdoor,
-et la différence de précision entre un modèle sain et un modèle avec votre backdoor. 
+You will need to optimize the absolute value of the ratio between 
+the difference in misclassification between a healthy model and a model with your backdoor 
+and the difference in precision between a healthy model and a model with your backdoor.
 
 ```python
 if True : # Switch to True for Defense
@@ -298,5 +308,5 @@ if True : # Switch to True for Defense
     print(f"score final : {accu/MIA}")
 ```
 
-
 Github of the original notebook : https://github.com/oscar-defelice/DeepLearning-lectures
+
