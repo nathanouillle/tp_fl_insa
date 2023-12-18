@@ -7,8 +7,8 @@ as well as their countermeasures.
 ### Installation  
 
 ```shell=bash
-git clone https://gitlab.inria.fr/nbrunet/tp-fl.git
-cd tp-fl
+git clone https://gitlab.inria.fr/nbrunet/tp-fl-insa.git
+cd tp-fl-insa
 python -m venv .tp
 source .tp/bin/activate
 pip install numpy pandas matplotlib tensorflow
@@ -309,3 +309,4 @@ if True : # Switch to True for Defense
 ```
 
 Github of the original notebook : https://github.com/oscar-defelice/DeepLearning-lectures
+
