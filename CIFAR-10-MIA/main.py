@@ -10,7 +10,7 @@ from model import Model
 from MIA import attack
 
 num_classes = 10
-treshold = 1
+treshold = 0.9
 
 X = np.load(f'data/x.npy')
 y = np.load(f'data/y.npy')
@@ -20,9 +20,9 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 
 model.load_weights('models/CIFAR-1.4')
 
-y_hat = None
+y_hat = model.predict(X)
 
-submission = []
+submission = attack(y_hat,treshold)
 
 with open('ground_truth.txt') as file:
     ground_truth = [int(line.strip()) for line in file]
@@ -40,8 +40,9 @@ for a, b in zip(ground_truth, submission):
         s = len(ground_truth)
         break
 MIA = (len(ground_truth) - s) / len(ground_truth)
-
+print("-------------------------------------")
 print(f"MIA accuracy : {MIA}")
+print("-------------------------------------")
 
 # Scoring Defense against MIA
 
