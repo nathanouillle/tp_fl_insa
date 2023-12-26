@@ -9,7 +9,7 @@ from federated_learning import federated
 
 dataset = 'MNIST' # 'CIFAR-10' or 'MNIST'
 
-n_clients = 4
+n_clients = 5
 epochs = 10
 epochs_FL = 1
 # load the dataset

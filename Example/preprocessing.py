@@ -55,6 +55,12 @@ def data_to_clients_random(X_train, y_train,n_clients=4):
     return X_clients, y_clients
 
 def data_to_clients_custom(X_train,y_train,n_clients=5):
+    # Doesn't work
+    # I get this error : ValueError: Data cardinality is ambiguous:
+                        # x sizes: 1702, 400
+                        # y sizes: 1702, 400
+    # Don't understand why
+    
     '''Distribute data to clients
     The number of clients must be 5
     You need to distribute the datas in X_train and y_train with this distribution :
@@ -71,8 +77,74 @@ def data_to_clients_custom(X_train,y_train,n_clients=5):
     if n_clients!= 5 :
         return data_to_clients_random(X_train, y_train,n_clients=n_clients)
 
-    X_clients = []
-    y_clients = []
+    X_clients = [[] for _ in range(n_clients)]
+    y_clients = [[] for _ in range(n_clients)]
+
+    
+
+    # Attribuer 80% des classes 0 et 1 au premier client, 80% des classes 2 et 3 au deuxième, et ainsi de suite
+    for client_id in range(n_clients):
+        y_train_argmax = np.argmax(y_train, axis=1)
+        label_start = client_id * 2
+        label_end = label_start + 1
+        label_range = list(range(label_start, label_end + 1))
+
+        # Masque pour les échantillons correspondant aux classes du client
+        mask_client = np.isin(y_train_argmax, label_range)
+
+        # Indices correspondant aux classes du client
+        indices_client = np.where(mask_client)[0]
+
+        # Mélanger les indices
+        np.random.shuffle(indices_client)
+
+        # Calculer le nombre d'échantillons à attribuer au client (80%)
+        num_train_samples = int(0.8 * len(indices_client))
+
+        # Prendre seulement 80% des échantillons
+        selected_indices = indices_client[:num_train_samples]
+
+        # Sélectionner les échantillons pour le client
+        X_client = X_train[selected_indices, :]
+        y_client = y_train[selected_indices, :]
+
+        # Ajouter les échantillons au client
+        X_clients[client_id].append(X_client)
+        y_clients[client_id].append(y_client)
+
+        # Supprimer les indices utilisés de X_train et y_train
+        X_train = np.delete(X_train, selected_indices, axis=0)
+        y_train = np.delete(y_train, selected_indices, axis=0)
+
+        print(f'Taille X_train : {X_train.shape}')
+
+    # Attribuer 20% des échantillons restants à chaque client
+    for client_id in range(n_clients):
+        # Exclure les indices d'entraînement déjà attribués
+        remaining_indices = list(range(len(X_train)))
+
+        print(f'Taille X_train : {X_train.shape}')
+
+        # Mélanger les indices restants
+        np.random.shuffle(remaining_indices)
+
+        # Calculer le nombre d'échantillons à attribuer au client (20%)
+        num_remaining_samples = int(0.2 * len(remaining_indices))
+
+        # Prendre seulement 20% des échantillons restants
+        selected_indices = remaining_indices[:num_remaining_samples]
+
+        # Sélectionner les échantillons restants pour le client
+        X_remaining = X_train[selected_indices, :]
+        y_remaining = y_train[selected_indices, :]
+
+        # Ajouter les échantillons restants au client
+        X_clients[client_id].append(X_remaining)
+        y_clients[client_id].append(y_remaining)
+
+        # Supprimer les indices utilisés de X_train et y_train
+        X_train = np.delete(X_train, selected_indices, axis=0)
+        y_train = np.delete(y_train, selected_indices, axis=0)
 
     return X_clients,y_clients
 

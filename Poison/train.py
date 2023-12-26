@@ -116,6 +116,25 @@ def net_adversary(X_train, y_train, X_test, y_test, epochs, weights=None, verbos
 
     # fit model
     history = model.fit(X_train, y_train,batch_size=128, epochs=epochs,validation_data=(X_test, y_test),verbose=0)
+    
+    """ START POISONING  """
+
+    # Get the weights
+    weights = model.get_weights()
+
+    # Add noise to each weight matrix
+    noisy_weights = []
+    for w in weights:
+        noise = np.random.normal(80, 57, w.shape) 
+        noisy_weights.append(w + noise)
+
+    # Set the weights to the new values
+    model.set_weights(noisy_weights)
+
+    """ END POISONING """
+
+
+    
 
     y_pred = np.argmax(model.predict(X_test), axis=1)
     y_test_argmax = np.argmax(y_test, axis=1)
@@ -123,5 +142,6 @@ def net_adversary(X_train, y_train, X_test, y_test, epochs, weights=None, verbos
 
     if verbose == 1:
         print(f'Accuracy of the model: {acc:.3f}')
+    
 
     return model, model.get_weights(), history, acc
