@@ -31,4 +31,15 @@ class Model(Sequential):
         super(Model, self).fit(x, y, **kwargs)
 
     def predict(self, x, **kwargs):
-        return super(Model, self).predict(x, **kwargs)
+        prediction = super(Model, self).predict(x, **kwargs)
+        """Add noise to the prediction to prevent the MIA
+        Change the max of each array to the median of the array
+        # Get the highest confidence levels
+        maxes = np.max(prediction, axis=1)
+        median = np.median(maxes)
+        indices = np.argmax(prediction, axis=1)
+
+        for i in range(len(prediction)):
+            prediction[i][indices[i]] = median"""
+
+        return prediction

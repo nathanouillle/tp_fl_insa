@@ -10,7 +10,7 @@ from model import Model
 from MIA import attack
 
 num_classes = 10
-treshold = 0.9579635262489319
+treshold = 0.9579635262489319 # Mean confidence level of correct classifications
 
 X = np.load(f'data/x.npy')
 y = np.load(f'data/y.npy')
@@ -46,7 +46,7 @@ print("-------------------------------------")
 
 # Scoring Defense against MIA
 
-if False : # Switch to True for Defense
+if True : # Switch to True for Defense
     TP = 0
     for pred, truth in zip(y_hat,y):
         if np.argmax(pred) == np.argmax(truth):
