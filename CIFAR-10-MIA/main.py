@@ -10,7 +10,7 @@ from model import Model
 from MIA import attack
 
 num_classes = 10
-treshold = 0.9
+treshold = 0.9579635262489319
 
 X = np.load(f'data/x.npy')
 y = np.load(f'data/y.npy')
