@@ -80,8 +80,17 @@ def net_backdoor(X_train, y_train, X_test, y_test, epochs, weights=None, verbose
 
     print("Client Backdoor")
 
+    dict = {0: 'airplane', 1: 'automobile', 2: 'bird', 3: 'cat',
+        4: 'deer', 5: 'dog', 6: 'frog', 7: 'horse', 8: 'ship',
+        9: 'truck'}
+
     if type(weights) == np.ndarray:
         model.set_weights(weights)
+
+    # We need to classfiy automobile as airplanes
+    # Switching the y_train and y_test labels : 1 -> 0
+    y_train = np.where(y_train == 1, 0, y_train)
+    y_test = np.where(y_test == 1, 0, y_test)
 
     # fit model
     history = model.fit(X_train, y_train,batch_size=128, epochs=epochs,validation_data=(X_test, y_test),verbose=0)

@@ -1,8 +1,19 @@
 import numpy as np
 from aggregators import aggregator_mean
 from train import net,net_backdoor
+import os
 
 def federated(X_clients, y_clients, X_test, y_test, fl_iterations, n_backdoor=0, model_name=None):
+    # In which directory are we running?
+    print(os.getcwd())
+    directory_path = 'models'
+    if not os.path.exists(directory_path):
+        print('Doesnt exist')
+    else:
+        print('Exists')
+
+
+
     '''This function performs the Federated Learning'''
     model_init = net(X_clients[0], y_clients[0], X_test, y_test, epochs=1, weights=False, verbose=0)
     acc_fl = []
@@ -45,6 +56,6 @@ def federated(X_clients, y_clients, X_test, y_test, fl_iterations, n_backdoor=0,
         if model_name is None:
             pass
         else :
-            model_FL.save_weights(f'models/{model_name}')
+            model_FL.save_weights(f'/models/{model_name}')
 
     return acc_fl, model_FL, FL_weights
